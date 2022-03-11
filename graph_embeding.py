@@ -3,6 +3,7 @@ import networkx as nx
 import os
 import pickle as pkl
 from progress.bar import Bar
+import torch
 def dump_data(file_name,data):
     f=open('./Intermedium/'+file_name,'wb')
     pkl.dump(data,f)
@@ -55,9 +56,8 @@ def graph_embeding(adj,embeding_mode='rwr',c=0.5):
     if embeding_mode=='rwr':
         w=adj.clone()
         w=w/w.sum(0)
-        E=np.eye(node_number)
-        graph_feature=(np.linalg.inv(E-c*w)).T
-        assert graph_feature.sum(axis=1)==np.ones_like(graph_feature.sum(axis=1)),"check the rwr implement"
+        E=torch.eye(node_number)
+        graph_feature=((1-c)*((E-c*w).inverse())).T
         return graph_feature
     else:
         pass

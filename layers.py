@@ -3,13 +3,12 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-class GraphBertLayer(nn.Module):
+class GraphAttentionLayer(nn.Module):
     """
-    imlement for bert attenion
+    Simple GAT layer, similar to https://arxiv.org/abs/1710.10903
     """
-    def __init__(self, in_features, out_features, dropout, alpha,node_number,out_features2, concat=True):
-        super(GraphBertLayer, self).__init__()
+    def __init__(self, in_features, out_features, dropout, alpha, concat=True):
+        super(GraphAttentionLayer, self).__init__()
         self.dropout = dropout
         self.in_features = in_features
         self.out_features = out_features
@@ -17,14 +16,13 @@ class GraphBertLayer(nn.Module):
         self.concat = concat
 
         self.W = nn.Parameter(torch.empty(size=(in_features, out_features)))
-        self.Ws=nn.Parameter(torch.empty(size=(node_number, out_features2)))
         nn.init.xavier_uniform_(self.W.data, gain=1.414)
         self.a = nn.Parameter(torch.empty(size=(2*out_features, 1)))
         nn.init.xavier_uniform_(self.a.data, gain=1.414)
 
         self.leakyrelu = nn.LeakyReLU(self.alpha)
 
-    def forward(self, h, struct_feature ,adj):
+    def forward(self, h, adj):
         Wh = torch.mm(h, self.W) # h.shape: (N, in_features), Wh.shape: (N, out_features)
         e = self._prepare_attentional_mechanism_input(Wh)
         #torch.save(Wh,'out_features.pkl')
@@ -54,3 +52,4 @@ class GraphBertLayer(nn.Module):
 
     def __repr__(self):
         return self.__class__.__name__ + ' (' + str(self.in_features) + ' -> ' + str(self.out_features) + ')'
+

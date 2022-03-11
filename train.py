@@ -14,8 +14,11 @@ import torch.optim as optim
 from torch.autograd import Variable
 
 from utils import load_data, accuracy
-from models import GAT, SpGAT
-
+from models import GAT as build_model
+from graph_embeding import graph_embeding 
+dataset='cora'
+train_test_val=[0.2,0.2,0.6]
+do_graph_embeding=True
 # Training settings
 parser = argparse.ArgumentParser()
 parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training.')
@@ -41,18 +44,14 @@ if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 # Load data
-adj, features, labels, idx_train, idx_val, idx_test = load_data(dataset="")
+adj, features, labels, idx_train, idx_val, idx_test = load_data(dataset=dataset,train_test_val=train_test_val)
 
+#graph embeding
+if do_graph_embeding:
+    features=torch.concat([features,graph_embeding(adj),adj.sum(axis=1).reshape((adj.shape[0],1))],dim=1)
 # Model and optimizer
-if args.sparse:
-    model = SpGAT(nfeat=features.shape[1], 
-                nhid=args.hidden, 
-                nclass=int(labels.max()) + 1, 
-                dropout=args.dropout, 
-                nheads=args.nb_heads, 
-                alpha=args.alpha)
-else:
-    model = GAT(nfeat=features.shape[1], 
+
+model = build_model(nfeat=features.shape[1], 
                 nhid=args.hidden, 
                 nclass=int(labels.max()) + 1, 
                 dropout=args.dropout, 
@@ -112,6 +111,7 @@ def compute_test():
           "accuracy= {:.4f}".format(acc_test.data.item()))
 
 # Train model
+dataset+="_model"
 print("begin to train model")
 t_total = time.time()
 loss_values = []
@@ -121,7 +121,7 @@ best_epoch = 0
 for epoch in range(args.epochs):
     loss_values.append(train(epoch))
 
-    torch.save(model.state_dict(), '{}.pkl'.format(epoch))
+    torch.save(model.state_dict(), '{}/{}.pkl'.format(dataset,epoch))
     if loss_values[-1] < best:
         best = loss_values[-1]
         best_epoch = epoch
@@ -132,15 +132,15 @@ for epoch in range(args.epochs):
     if bad_counter == args.patience:
         break
 
-    files = glob.glob('*.pkl')
+    files = glob.glob('{}/*.pkl'.format(dataset))
     for file in files:
-        epoch_nb = int(file.split('.')[0])
+        epoch_nb = int(file[len(dataset)+1:].split('.')[0])
         if epoch_nb < best_epoch:
             os.remove(file)
 
-files = glob.glob('*.pkl')
+files = glob.glob('{}/*.pkl'.format(dataset))
 for file in files:
-    epoch_nb = int(file.split('.')[0])
+    epoch_nb = int(file[len(dataset)+1:].split('.')[0])
     if epoch_nb > best_epoch:
         os.remove(file)
 
@@ -149,7 +149,7 @@ print("Total time elapsed: {:.4f}s".format(time.time() - t_total))
 
 # Restore best model
 print('Loading {}th epoch'.format(best_epoch))
-model.load_state_dict(torch.load('{}.pkl'.format(best_epoch)))
+model.load_state_dict(torch.load('{}/{}.pkl'.format(dataset,best_epoch)))
 
 # Testing
 compute_test()

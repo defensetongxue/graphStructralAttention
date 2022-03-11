@@ -3,7 +3,7 @@ import scipy.sparse as sp
 import torch
 import pandas as pd
 
-def citeceer_load_data(train_val_test=[0.2,0.2,0.6]):
+def citeceer_loader(train_val_test=[0.2,0.2,0.6]):
     """loading data from the data set """
     print('Loading citeseer dataset...')
     # get the data from dataset
