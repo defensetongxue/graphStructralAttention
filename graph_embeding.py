@@ -51,7 +51,7 @@ def cal_distance_matrix(adj,algorithm='dijstra',load_from_exisited=False,dataset
     print("finshed calculate distance matrix, begin to calculate ri_index and ri_all")
     return distance
         
-def graph_embeding(adj,embeding_mode='rwr',c=0.5):
+def graph_embeding(adj,embeding_mode='rwr',c=0.95):
     node_number=adj.shape[0]
     if embeding_mode=='rwr':
         w=adj.clone()
