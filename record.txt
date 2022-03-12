@@ -1,0 +1,16 @@
+primary GAT 
+Loading 832th epoch
+Test set results: loss= 0.7370 accuracy= 0.8330
+
+straightly using structral embeding with rwr 16hiddens in cora
+Total time elapsed: 700.0949s
+Loading 581th epoch
+Test set results: loss= 0.9220 accuracy= 0.7730
+
+Loading 664th epoch embeding with rwr 8 hiddens in cora
+Test set results: loss= 0.8344 accuracy= 0.7850
+
+Loading 524th epoch r=0.8
+Test set results: loss= 0.7832 accuracy= 0.8030
+Loading 1025th epoch r=0.95
+Test set results: loss= 0.6741 accuracy= 0.8370

@@ -1,5 +1,6 @@
-graphviz==0.19.1
-numpy==1.21.5
+networkx==2.7.1
+numpy==1.22.3
 pandas==1.4.1
+progress==1.6
 scipy==1.8.0
-torch==1.10.1
+torch==1.11.0

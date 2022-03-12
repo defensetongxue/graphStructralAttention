@@ -1,0 +1,8 @@
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/home/gy/projects/graphStructralAttention/train.py", line 17, in <module>
+    from models import GAT as build_model
+  File "/home/gy/projects/graphStructralAttention/models.py", line 33
+    self.attentions = [researchModel(nfeat,nfeat, nhid,nhid,nhid dropout=dropout, alpha=alpha, concat=True) for _ in range(nheads)]
+                                                                 ^
+SyntaxError: invalid syntax

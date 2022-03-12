@@ -48,7 +48,7 @@ adj, features, labels, idx_train, idx_val, idx_test = load_data(dataset=dataset,
 
 #graph embeding
 if do_graph_embeding:
-    features=torch.concat([features,graph_embeding(adj),adj.sum(axis=1).reshape((adj.shape[0],1))],dim=1)
+    features=torch.concat([features,graph_embeding(adj,c=0.99),adj.sum(axis=1).reshape((adj.shape[0],1))],dim=1)
 # Model and optimizer
 
 model = build_model(nfeat=features.shape[1], 
